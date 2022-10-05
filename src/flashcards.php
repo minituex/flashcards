@@ -8,7 +8,7 @@ class flashcards
     {
         echo "Welcome to Flashcards \n\n";
 
-        $mode = readline("Select laguage mode (kr, en, mix): ");
+        $mode = readline("Select language mode (kr, en, mix): ");
         if (!$this->validateMode($mode)) {
             exit("invalid mode - exiting\n");
         }
@@ -25,6 +25,12 @@ class flashcards
 
     # private
 
+    /**
+     * basic loop through the randomly selected words
+     * @param $checks
+     * @param array $dictionary
+     * @param string $mode
+     */
     private function runTest($checks, array $dictionary, string $mode)
     {
         $points = 0;
@@ -77,6 +83,10 @@ class flashcards
         }
     }
 
+    /**
+     * Fetch the levels/sets
+     * @return array
+     */
     private function processDictionaries(): array
     {
         $levels = readline("Select levels! Enter all selected comma separated. Empty equals all: ");
@@ -110,6 +120,11 @@ class flashcards
         return json_decode($content);
     }
 
+    /**
+     * Hard coded for my learning. Fork it for your own version ;)
+     * @param string $mode
+     * @return bool
+     */
     private function validateMode(string $mode): bool
     {
         $validModes = ['kr', 'en', 'mix'];
