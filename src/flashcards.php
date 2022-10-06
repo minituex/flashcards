@@ -15,7 +15,7 @@ class flashcards
 
         $dictionary = $this->processDictionaries();
 
-        $checks = readline("How many words do you want to test? ");
+        $checks = readline("How many words do you want to test? (max " . count($dictionary) . "): ");
         if (!is_numeric($checks)) {
             exit("non-numeric value - exiting\n");
         }
