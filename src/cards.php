@@ -91,7 +91,7 @@ class cards
         if (!empty($questions)) {
             echo "Card(s) with this question already in dictionary: \n";
             foreach ($questions as $q) {
-                echo "Level ".$q['level'].", Question $first, Answer: " . $q['answer'] . PHP_EOL;
+                echo "Level ".$q['level'].", Question: $first, Answer: " . $q['answer'] . PHP_EOL;
             }
 
             if (readline("Add anyway? (Y/n) ") !== "Y") {
