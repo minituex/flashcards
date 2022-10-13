@@ -8,7 +8,7 @@ class cards
 
     public function run()
     {
-        $options = getopt("c::u::d::", ["level:"]);
+        $options = getopt("c::u::d::s::", ["level:"]);
         $option = $this->validateOptions($options);
         $this->fetchDictionary();
         $this->$option();
@@ -73,13 +73,19 @@ class cards
         exit();
     }
 
-    private function validateOptions(array $options): string
+    /**
+     * search card
+     */
+    private function s()
     {
-        if (count($options)  != 2){
-            exit("Wrong number of arguments - exiting!\n");
+        $search = readline("Search for a specific card or term: ");
+
+        $matches = array_merge($this->findMatches($search, 'front'), $this->findMatches($search, 'back'));
+        foreach ($matches as $card) {
+            echo "\n  Level: ". $card['level'] .
+            "\n\033[0;31m  Question: \033[0m" . $card['question'].
+            "\n\033[0;32m  Question: \033[0m" . $card['answer'] . "\n\n";
         }
-        if (!isset($options['level'])) {
-            exit("--level must be set - exiting!\n");
         exit();
     }
 
