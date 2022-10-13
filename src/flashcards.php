@@ -62,7 +62,10 @@ class flashcards
                 break;
             default: echo "hehehe";
         }
-        echo "Test done: You have answered $points of $checks correct!\n";
+    
+        $percent = ( $points / $checks ) * 100;
+        $coloredPoints = $percent >= 80 ? "\033[0;32m $points \033[0m" : ($percent >= 50 ? "\033[1;33m $points \033[0m" : "\033[0;31m $points \033[0m");
+        echo "\nTest done: You have answered $coloredPoints of $checks correct!\n";
     }
 
     /**
@@ -75,10 +78,10 @@ class flashcards
     {
         $input = readline("$question: ");
         if ($input === $answer) {
-            echo "\033[0;32m Correct! \033[0m\n";
+            echo "\033[0;32m ✓ \033[0m\n";
             return 1;
         } else {
-            echo "\033[0;31m Wrong :( $answer \033[0m\n";
+            echo "\033[0;31m ✗ \033[1m $answer \033[0m\n";
             return 0;
         }
     }
