@@ -14,6 +14,9 @@ class cards
         $this->$option();
     }
 
+    /**
+     * create new card
+     */
     private function c()
     {
         echo "Add a new card: \n";
@@ -29,11 +32,17 @@ class cards
         file_put_contents(self::CARD_DIR . $this->level . ".json", json_encode($file, JSON_UNESCAPED_UNICODE));
     }
 
+    /**
+     * update existing card(s)
+     */
     private function u()
     {
         echo "Not yet implemented \n";
     }
 
+    /**
+     * delete card
+     */
     private function d()
     {
         echo "Not yet implemented \n";
@@ -52,6 +61,9 @@ class cards
         return array_key_first($options);
     }
 
+    /**
+     * gather all cards, return by level as key, value (question, answer)
+     */
     private function fetchDictionary()
     {
         $files = scandir(self::CARD_DIR);
@@ -71,6 +83,11 @@ class cards
         $this->dictionary = $dict;
     }
 
+    /**
+     * check if an entry exists while adding new cards
+     * @param $first
+     * @param $second
+     */
     private function checkForDuplicate($first, $second)
     {
         $questions = [];
