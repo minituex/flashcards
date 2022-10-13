@@ -30,6 +30,7 @@ class cards
         $file = json_decode(file_get_contents(self::CARD_DIR . $this->level . ".json"));
         $file[] = [$first, $second];
         file_put_contents(self::CARD_DIR . $this->level . ".json", json_encode($file, JSON_UNESCAPED_UNICODE));
+        exit(0);
     }
 
     /**
@@ -69,6 +70,7 @@ class cards
     private function d()
     {
         echo "Not yet implemented \n";
+        exit();
     }
 
     private function validateOptions(array $options): string
@@ -78,9 +80,34 @@ class cards
         }
         if (!isset($options['level'])) {
             exit("--level must be set - exiting!\n");
+        exit();
+    }
+
+    /**
+     * validate input params
+     * -c --level
+     * -u
+     * -d
+     * -s
+     * @param array $options
+     * @return string
+     */
+    private function validateOptions(array $options): string
+    {
+        if (isset($options['c'])) {
+            if (count($options)  != 2){
+                exit("Wrong number of arguments - exiting!\n");
+            }
+            if (!isset($options['level'])) {
+                exit("--level must be set - exiting!\n");
+            }
+            $this->level = (int)$options['level'];
+            unset($options['level']);
+        } else {
+            if (count($options)  != 1){
+                exit("Wrong number of arguments - exiting!\n");
+            }
         }
-        $this->level = (int)$options['level'];
-        unset($options['level']);
         return array_key_first($options);
     }
 
