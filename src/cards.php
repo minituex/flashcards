@@ -37,7 +37,30 @@ class cards
      */
     private function u()
     {
-        echo "Not yet implemented \n";
+        echo "Updating a card: \n";
+        $search = readline("Search term (full front or back): ");
+        $matches = array_merge($this->findMatches($search, 'front'), $this->findMatches($search, 'back'));
+
+        $updates = [];
+        echo "Found " . count($matches) . " matches for your search term. \n";
+        foreach ($matches as $card) {
+            echo "Match found: \n";
+            echo "Level ".$card['level'].", Question: " . $card['question'] .", Answer: " . $card['answer'] . PHP_EOL;
+            $edit = readline("Update? (Y/n): ");
+            if ( $edit === 'Y' || empty($edit)) {
+                $q = readline("New front?: ");
+                $a = readline("New back?: ");
+                $updates[] = [
+                    'level' => $card['level'],
+                    'key' => $card['question'],
+                    'value' => $card['answer'],
+                    'q' => empty($q) ? $card['question'] : $q ,
+                    'a' => empty($a) ? $card['answer'] : $a
+                ];
+            }
+        }
+        $this->updateDict($updates);
+        echo "Card(s) updated - done! \n";
     }
 
     /**
@@ -90,20 +113,8 @@ class cards
      */
     private function checkForDuplicate($first, $second)
     {
-        $questions = [];
-        $answers = [];
-        foreach ($this->dictionary as $level => $cards) {
-            if (array_key_exists($first, $cards)) {
-                $questions[] = ['level' => $level, 'answer' => $cards[$first]];
-            }
-
-            if (in_array($second, $cards)) {
-                $card = array_filter($cards, fn($c) => $c === $second);
-                foreach ($card as $q => $a) {
-                    $answers[] = ['level' => $level, 'question' => $q];
-                }
-            }
-        }
+        $questions = $this->findMatches($first, 'front');
+        $answers = $this->findMatches($second, 'back');
 
         if (!empty($questions)) {
             echo "Card(s) with this question already in dictionary: \n";
@@ -130,6 +141,53 @@ class cards
 
     }
 
+    /**
+     * find matches by term and side of card (front, back)
+     * @param string $term
+     * @param string $side
+     * @return array[]
+     */
+    private function findMatches(string $term, string $side): array
+    {
+        $matches = [];
+        if ($side === 'front') {
+            foreach ($this->dictionary as $level => $cards) {
+                if (array_key_exists($term, $cards)) {
+                    $matches[] = ['level' => $level,'question' => $term, 'answer' => $cards[$term]];
+                }
+            }
+        } else {
+            foreach ($this->dictionary as $level => $cards) {
+                if (in_array($term, $cards)) {
+                    $card = array_filter($cards, fn($c) => $c === $term);
+                    foreach ($card as $q => $a) {
+                        $matches[] = ['level' => $level, 'question' => $q, 'answer' => $term];
+                    }
+                }
+            }
+        }
+        return $matches;
+    }
 
+    /**
+     * update card(s) according to user input
+     * @param array $cards
+     */
+    private function updateDict(array $cards)
+    {
+        foreach ($cards as $card) {
+            $file = self::CARD_DIR . $card['level'] .'.json';
+            if ($card['key'] !== $card['q'] || $card['value'] !== $card['a']) {
+                #update needed
+                $level = json_decode(file_get_contents($file));
+                foreach ($level as &$dictCard) {
+                    if ($dictCard[0] !== $card['key']) {continue;}
+                    $dictCard[0] = $card['q'];
+                    $dictCard[1] = $card['a'];
+                }
+                file_put_contents($file, json_encode($level, JSON_UNESCAPED_UNICODE));
+            }
+        }
+    }
 }
 (new cards())->run();
