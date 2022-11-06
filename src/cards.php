@@ -69,8 +69,19 @@ class cards
      */
     private function d()
     {
-        echo "Not yet implemented \n";
-        exit();
+        $mode = readline("Select a mode (numerical n, search s): ");
+        if ($mode === "n") {
+            $level = intval(readline("Select a level: ")); //default 0 -> error
+            if ($level === 0) {
+                exit("Faulty input - exiting.");
+            }
+            $dict = json_decode(file_get_contents(self::CARD_DIR . $level . ".json"));
+            $sections = array_chunk($dict, 10);
+            foreach ($sections as $section) {
+
+                exit();
+            }
+        }
     }
 
     /**
@@ -83,8 +94,8 @@ class cards
         $matches = array_merge($this->findMatches($search, 'front'), $this->findMatches($search, 'back'));
         foreach ($matches as $card) {
             echo "\n  Level: ". $card['level'] .
-            "\n\033[0;31m  Question: \033[0m" . $card['question'].
-            "\n\033[0;32m  Question: \033[0m" . $card['answer'] . "\n\n";
+            "\n\033[0;34m  Question: \033[0m" . $card['question'].
+            "\n\033[0;34m  Answer: \033[0m" . $card['answer'] . "\n\n";
         }
         exit();
     }

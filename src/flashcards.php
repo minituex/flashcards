@@ -4,6 +4,8 @@ class flashcards
 {
     private const CARD_DIR = '../cards/';
 
+    private array $wrongAnswers = [];
+
     public function run()
     {
         echo "Welcome to Flashcards \n\n";
@@ -66,6 +68,13 @@ class flashcards
         $percent = ( $points / $checks ) * 100;
         $coloredPoints = $percent >= 80 ? "\033[0;32m $points \033[0m" : ($percent >= 50 ? "\033[1;33m $points \033[0m" : "\033[0;31m $points \033[0m");
         echo "\nTest done: You have answered $coloredPoints of $checks correct!\n";
+        $repeat = readline("See wrong answers? (Y/n): ");
+        if ($repeat === 'Y' || empty($repeat)) {
+            foreach ($this->wrongAnswers as $wrongAnswer) {
+                echo "\n\033[0;34m  Question: \033[0m" . $wrongAnswer[0].
+                    "\n\033[0;34m  Answer: \033[0m" . $wrongAnswer[1] . "\n\n";
+            }
+        }
     }
 
     /**
@@ -81,6 +90,7 @@ class flashcards
             echo "\033[0;32m ✓ \033[0m\n";
             return 1;
         } else {
+            $this->wrongAnswers[] = [$question, $answer];
             echo "\033[0;31m ✗ \033[1m $answer \033[0m\n";
             return 0;
         }
