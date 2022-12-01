@@ -3,19 +3,25 @@
 class flashcards
 {
     private const CARD_DIR = '../cards/';
+    private const SUPPORTED_LANGUAGES = ['ko', 'de'];
+    private const MODES = ['front', 'back', 'mix'];
+
+    private string $dir;
 
     private array $wrongAnswers = [];
 
     public function run()
     {
         echo "Welcome to Flashcards \n\n";
+        $lang = readline("Select language (ko, de): ");
+        $this->validateLang($lang);
 
-        $mode = readline("Select language mode (kr, en, mix): ");
-        if (!$this->validateMode($mode)) {
-            exit("invalid mode - exiting\n");
-        }
+        $mode = readline("Select card side to show (front, back, mix): ");
+        $this->validateMode($mode);
 
+        $this->dir = self::CARD_DIR . $lang . '/';
         $dictionary = $this->processDictionaries();
+
 
         $checks = readline("How many words do you want to test? (max " . count($dictionary) . "): ");
         if (!is_numeric($checks)) {
@@ -107,7 +113,7 @@ class flashcards
         $dirs = [];
         if (empty($levels)) {
             # fetch all
-            $files = scandir(self::CARD_DIR);
+            $files = scandir($this->dir);
             unset($files[0]);
             unset($files[1]);
 
@@ -117,7 +123,7 @@ class flashcards
         } else {
             $levels = explode(",", $levels);
             foreach ($levels as $level) {
-                $dirs = array_merge($this->processFile(self::CARD_DIR . $level . '.json'), $dirs);
+                $dirs = array_merge($this->processFile($this->dir . $level . '.json'), $dirs);
             }
         }
         return $dirs;
@@ -129,19 +135,28 @@ class flashcards
      */
     private function processFile(string $file): array
     {
-        $content = file_get_contents(self::CARD_DIR. $file);
+        $content = file_get_contents($this->dir. $file);
         return json_decode($content);
     }
 
     /**
-     * Hard coded for my learning. Fork it for your own version ;)
-     * @param string $mode
-     * @return bool
+     * @param string $lang
      */
-    private function validateMode(string $mode): bool
+    private function validateLang(string $lang)
     {
-        $validModes = ['kr', 'en', 'mix'];
-        return in_array($mode, $validModes);
+        if (!in_array($lang, self::SUPPORTED_LANGUAGES)) {
+            exit('Language not supported :( - try one of these: ' . implode(', ', self::SUPPORTED_LANGUAGES));
+        }
+    }
+    
+    /**
+     * @param string $mode
+     */
+    private function validateMode(string $mode)
+    {
+        if(!in_array($mode, self::MODES)) {
+            exit("invalid mode - exiting\n");
+        }
     }
 }
 
