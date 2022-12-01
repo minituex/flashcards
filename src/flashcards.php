@@ -148,7 +148,7 @@ class flashcards
             exit('Language not supported :( - try one of these: ' . implode(', ', self::SUPPORTED_LANGUAGES));
         }
     }
-    
+
     /**
      * @param string $mode
      */

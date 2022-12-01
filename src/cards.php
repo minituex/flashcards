@@ -3,6 +3,7 @@
 class cards
 {
     private const CARD_DIR = '../cards/';
+    private const SECTION_SIZE = 10;
     private int $level;
     private array $dictionary;
     private string $lang;
@@ -32,10 +33,9 @@ class cards
 
         $file = json_decode(file_get_contents($this->dir . $this->level . ".json"));
         $file[] = [$first, $second];
-        file_put_contents($this->dir . $this->level . ".json", json_encode($file, JSON_UNESCAPED_UNICODE));
+        $this->writeDictionary($file);
         exit(0);
     }
-
 
     /**
      * update existing card(s)
@@ -80,12 +80,21 @@ class cards
             if ($level === 0) {
                 exit("Faulty input - exiting.");
             }
+            $this->level = $level;
             $dict = json_decode(file_get_contents($this->dir . $level . ".json"));
-            $sections = array_chunk($dict, 10);
-            foreach ($sections as $section) {
-
-                exit();
+            $sections = array_chunk($dict, self::SECTION_SIZE);
+            foreach ($sections as &$section) {
+                $this->prettyPrint($section);
+                $selection = readline("\n Enter number or skip (Enter): ");
+                if ($selection !== '0' && empty($selection)) {echo 'sdkfjhg';continue;}
+                if ($selection < count($section)) {
+                    unset($section[$selection]); //delete entry
+                    $section = array_values($section);
+                    break;
+                }
+                exit("Invalid selection - exiting! \n");
             }
+            $this->writeDictionary(array_merge($sections)[0]);
         }
     }
 
@@ -191,6 +200,14 @@ class cards
     }
 
     /**
+     * @param array $dictionary
+     */
+    private function writeDictionary(array $dictionary)
+    {
+        file_put_contents($this->dir . $this->level . ".json", json_encode($dictionary, JSON_UNESCAPED_UNICODE));
+    }
+
+    /**
      * update card(s) according to user input
      * @param array $cards
      */
@@ -211,9 +228,21 @@ class cards
         }
     }
 
+    private function prettyPrint(array $sections)
+    {
+        $count = 0;
+        foreach ($sections as $card) {
+            echo "  [$count] \033[01;34m ". $card[0] ." \033[01;36m " . $card[1] . "\033[0m\n";
+            $count++;
+        }
+    }
+
+
     /**
      * validate input params
-     * -c --level
+     * --lang (all!)
+     * --level (with c)
+     * -c
      * -u
      * -d
      * -s
