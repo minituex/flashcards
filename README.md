@@ -4,6 +4,9 @@ I could not find an online tool for custom flashcards that was free or usable. S
 
 No it's not pretty - but it does the job, kinda.
 
+
+now with multi-lang support!
+
 ## Usage
 
 In general, the words are divided into levels and ordered by language.
