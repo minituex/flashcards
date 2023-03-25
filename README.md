@@ -5,7 +5,7 @@ I could not find an online tool for custom flashcards that was free or usable. S
 No it's not pretty - but it does the job, kinda.
 
 
-Now with multi-lang support!
+Now with multi-lang support!!
 
 ## Usage
 
